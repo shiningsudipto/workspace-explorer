@@ -68,7 +68,7 @@ export function WorkspaceSearch() {
                     <button
                       type="button"
                       onClick={() => handleSelect(result)}
-                      className="flex w-full flex-col items-start gap-0.5 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground"
+                      className="flex w-full cursor-pointer flex-col items-start gap-0.5 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground"
                     >
                       <span className="flex items-center gap-1.5">
                         <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />

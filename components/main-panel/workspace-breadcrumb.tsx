@@ -44,7 +44,7 @@ export function WorkspaceBreadcrumb() {
                         onClick={() => setSelectedFolderId(folder.id)}
                       />
                     }
-                    className="truncate"
+                    className="cursor-pointer truncate"
                   >
                     {folder.name}
                   </BreadcrumbLink>

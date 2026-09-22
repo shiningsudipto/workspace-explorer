@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Folder, MoreVertical } from "lucide-react";
+import { Download, FileText, Folder, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { downloadTextFile } from "@/lib/download-text-file";
 import { FileSystemItem } from "@/lib/types";
 
 interface ItemRowProps {
@@ -59,6 +60,14 @@ export function ItemRow({ item, onOpen, onRename, onDelete }: ItemRowProps) {
           <DropdownMenuItem onClick={() => onRename(item)}>
             Rename
           </DropdownMenuItem>
+          {item.type === "file" && (
+            <DropdownMenuItem
+              onClick={() => downloadTextFile(item.name, item.content ?? "")}
+            >
+              <Download className="h-4 w-4" />
+              Download
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem variant="destructive" onClick={() => onDelete(item)}>
             Delete
           </DropdownMenuItem>

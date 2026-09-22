@@ -81,7 +81,7 @@ export function TreeNode({
             onToggleExpand(folderId);
           }}
           className={cn(
-            "flex h-4 w-4 shrink-0 items-center justify-center rounded-sm hover:bg-muted",
+            "flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-muted",
             !hasChildren && "invisible"
           )}
           aria-label={isExpanded ? "Collapse folder" : "Expand folder"}
