@@ -10,6 +10,7 @@ import { useWorkspaceStore } from "@/lib/workspace-store";
 import { FileEditor } from "./file-editor";
 import { FolderContents } from "./folder-contents";
 import { WorkspaceBreadcrumb } from "./workspace-breadcrumb";
+import { WorkspaceSearch } from "./workspace-search";
 
 interface MainPanelProps {
   folderId: string;
@@ -29,8 +30,11 @@ export function MainPanel({ folderId }: MainPanelProps) {
 
   return (
     <main className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
-        <WorkspaceBreadcrumb />
+      <div className="flex items-center gap-3 border-b px-4 py-3">
+        <div className="min-w-0 flex-1">
+          <WorkspaceBreadcrumb />
+        </div>
+        <WorkspaceSearch />
         {/* Creating always targets the folder being browsed, which isn't
             meaningful while a file editor has replaced that view. */}
         {!openFile && (
