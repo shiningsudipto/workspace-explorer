@@ -1,8 +1,15 @@
 "use client";
 
-import { ChevronRight, Folder, FolderOpen } from "lucide-react";
+import { ChevronRight, Folder, FolderOpen, MoreVertical } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { WorkspaceItems } from "@/lib/types";
+import { FileSystemItem, ROOT_ID, WorkspaceItems } from "@/lib/types";
 import { getChildren } from "@/lib/workspace-helpers";
 
 interface TreeNodeProps {
@@ -13,6 +20,8 @@ interface TreeNodeProps {
   onToggleExpand: (id: string) => void;
   selectedFolderId: string;
   onSelect: (id: string) => void;
+  onRename: (item: FileSystemItem) => void;
+  onDelete: (item: FileSystemItem) => void;
 }
 
 // Sidebar shows folders only (files live in the main panel) — matches the
@@ -25,6 +34,8 @@ export function TreeNode({
   onToggleExpand,
   selectedFolderId,
   onSelect,
+  onRename,
+  onDelete,
 }: TreeNodeProps) {
   const folder = items[folderId];
   if (!folder) return null;
@@ -35,6 +46,11 @@ export function TreeNode({
   const isExpanded = expandedIds.has(folderId);
   const isSelected = folderId === selectedFolderId;
   const hasChildren = childFolders.length > 0;
+  // The root ("Workspace") is the fixed container — it can't be renamed or
+  // deleted, so it gets no actions menu at all (the store also guards
+  // against deleting it, but this avoids showing an action that would
+  // always fail for rename).
+  const isRoot = folderId === ROOT_ID;
 
   return (
     <div>
@@ -52,7 +68,7 @@ export function TreeNode({
         }}
         style={{ paddingLeft: `${depth * 16 + 4}px` }}
         className={cn(
-          "flex cursor-pointer items-center gap-1 rounded-md py-1.5 pr-2 text-sm select-none outline-none",
+          "group flex cursor-pointer items-center gap-1 rounded-md py-1.5 pr-1 text-sm select-none outline-none",
           "hover:bg-accent hover:text-accent-foreground",
           "focus-visible:ring-2 focus-visible:ring-ring/50",
           isSelected && "bg-accent text-accent-foreground font-medium"
@@ -83,7 +99,41 @@ export function TreeNode({
         ) : (
           <Folder className="h-4 w-4 shrink-0 text-muted-foreground" />
         )}
-        <span className="truncate">{folder.name}</span>
+        <span className="min-w-0 flex-1 truncate">{folder.name}</span>
+        {!isRoot && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-popup-open:opacity-100"
+                  aria-label={`Actions for ${folder.name}`}
+                />
+              }
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            >
+              <MoreVertical className="h-4 w-4" />
+            </DropdownMenuTrigger>
+            {/* See ItemRow for why DropdownMenuContent also needs its own
+                stopPropagation — portal clicks still bubble through the
+                React tree into this row's onClick otherwise. */}
+            <DropdownMenuContent
+              align="end"
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            >
+              <DropdownMenuItem onClick={() => onRename(folder)}>
+                Rename
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => onDelete(folder)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
       {hasChildren && isExpanded && (
         <div role="group">
@@ -97,6 +147,8 @@ export function TreeNode({
               onToggleExpand={onToggleExpand}
               selectedFolderId={selectedFolderId}
               onSelect={onSelect}
+              onRename={onRename}
+              onDelete={onDelete}
             />
           ))}
         </div>

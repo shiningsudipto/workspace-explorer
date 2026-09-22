@@ -2,11 +2,17 @@
 
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ROOT_ID } from "@/lib/types";
+import { FileSystemItem, ROOT_ID } from "@/lib/types";
+import { getPath } from "@/lib/workspace-helpers";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { TreeNode } from "./tree-node";
 
-export function WorkspaceSidebar() {
+interface WorkspaceSidebarProps {
+  onRename: (item: FileSystemItem) => void;
+  onDelete: (item: FileSystemItem) => void;
+}
+
+export function WorkspaceSidebar({ onRename, onDelete }: WorkspaceSidebarProps) {
   const items = useWorkspaceStore((s) => s.items);
   const selectedFolderId = useWorkspaceStore((s) => s.selectedFolderId);
   const setSelectedFolderId = useWorkspaceStore((s) => s.setSelectedFolderId);
@@ -16,6 +22,24 @@ export function WorkspaceSidebar() {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
     () => new Set([ROOT_ID])
   );
+
+  // Auto-expand the path to the selected folder whenever it changes from
+  // *outside* the tree (breadcrumb, search, a main-panel row, sidebar
+  // delete-recovery) — otherwise navigating there via any of those leaves
+  // its ancestors collapsed and it simply isn't visible/highlighted in the
+  // tree at all. Adjusts state during render (React's documented pattern
+  // for "state derived from a changed prop") rather than in an effect, so
+  // it doesn't cost an extra render pass.
+  const [lastSelectedFolderId, setLastSelectedFolderId] = useState(selectedFolderId);
+  if (selectedFolderId !== lastSelectedFolderId) {
+    setLastSelectedFolderId(selectedFolderId);
+    const ancestorIds = getPath(items, selectedFolderId).map((f) => f.id);
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      ancestorIds.forEach((id) => next.add(id));
+      return next;
+    });
+  }
 
   const toggleExpanded = (id: string) => {
     setExpandedIds((prev) => {
@@ -44,6 +68,8 @@ export function WorkspaceSidebar() {
             onToggleExpand={toggleExpanded}
             selectedFolderId={selectedFolderId}
             onSelect={setSelectedFolderId}
+            onRename={onRename}
+            onDelete={onDelete}
           />
         </div>
       </ScrollArea>

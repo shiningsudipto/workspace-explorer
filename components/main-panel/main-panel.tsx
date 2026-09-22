@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { CreateItemDialog } from "@/components/dialogs/create-item-dialog";
-import { DeleteItemDialog } from "@/components/dialogs/delete-item-dialog";
-import { RenameItemDialog } from "@/components/dialogs/rename-item-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { FileSystemItem } from "@/lib/types";
@@ -15,9 +13,11 @@ import { WorkspaceSearch } from "./workspace-search";
 
 interface MainPanelProps {
   folderId: string;
+  onRename: (item: FileSystemItem) => void;
+  onDelete: (item: FileSystemItem) => void;
 }
 
-export function MainPanel({ folderId }: MainPanelProps) {
+export function MainPanel({ folderId, onRename, onDelete }: MainPanelProps) {
   const items = useWorkspaceStore((s) => s.items);
   const selectedFileId = useWorkspaceStore((s) => s.selectedFileId);
   const openFile =
@@ -26,8 +26,6 @@ export function MainPanel({ folderId }: MainPanelProps) {
       : null;
 
   const [createOpen, setCreateOpen] = useState(false);
-  const [renameTarget, setRenameTarget] = useState<FileSystemItem | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<FileSystemItem | null>(null);
 
   return (
     <main className="flex h-full flex-col self-stretch overflow-hidden">
@@ -54,8 +52,8 @@ export function MainPanel({ folderId }: MainPanelProps) {
         ) : (
           <FolderContents
             folderId={folderId}
-            onRename={setRenameTarget}
-            onDelete={setDeleteTarget}
+            onRename={onRename}
+            onDelete={onDelete}
           />
         )}
       </div>
@@ -64,18 +62,6 @@ export function MainPanel({ folderId }: MainPanelProps) {
         open={createOpen}
         onOpenChange={setCreateOpen}
         parentId={folderId}
-      />
-      <RenameItemDialog
-        item={renameTarget}
-        onOpenChange={(open) => {
-          if (!open) setRenameTarget(null);
-        }}
-      />
-      <DeleteItemDialog
-        item={deleteTarget}
-        onOpenChange={(open) => {
-          if (!open) setDeleteTarget(null);
-        }}
       />
     </main>
   );
