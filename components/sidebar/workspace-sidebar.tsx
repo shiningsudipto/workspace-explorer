@@ -10,9 +10,15 @@ import { TreeNode } from "./tree-node";
 interface WorkspaceSidebarProps {
   onRename: (item: FileSystemItem) => void;
   onDelete: (item: FileSystemItem) => void;
+  /** Called after a folder is selected — used on mobile to close the drawer. */
+  onNavigate?: () => void;
 }
 
-export function WorkspaceSidebar({ onRename, onDelete }: WorkspaceSidebarProps) {
+export function WorkspaceSidebar({
+  onRename,
+  onDelete,
+  onNavigate,
+}: WorkspaceSidebarProps) {
   const items = useWorkspaceStore((s) => s.items);
   const selectedFolderId = useWorkspaceStore((s) => s.selectedFolderId);
   const setSelectedFolderId = useWorkspaceStore((s) => s.setSelectedFolderId);
@@ -53,6 +59,11 @@ export function WorkspaceSidebar({ onRename, onDelete }: WorkspaceSidebarProps) 
     });
   };
 
+  const handleSelect = (id: string) => {
+    setSelectedFolderId(id);
+    onNavigate?.();
+  };
+
   return (
     <nav
       aria-label="Workspace folders"
@@ -67,7 +78,7 @@ export function WorkspaceSidebar({ onRename, onDelete }: WorkspaceSidebarProps) 
             expandedIds={expandedIds}
             onToggleExpand={toggleExpanded}
             selectedFolderId={selectedFolderId}
-            onSelect={setSelectedFolderId}
+            onSelect={handleSelect}
             onRename={onRename}
             onDelete={onDelete}
           />

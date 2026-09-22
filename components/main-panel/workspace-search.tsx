@@ -36,7 +36,7 @@ export function WorkspaceSearch() {
   };
 
   return (
-    <div className="relative w-full max-w-xs">
+    <div className="relative w-28 shrink sm:w-48 md:w-full md:max-w-xs">
       <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={query}
@@ -51,7 +51,7 @@ export function WorkspaceSearch() {
         aria-label="Search workspace"
       />
       {showDropdown && (
-        <div className="absolute top-full z-40 mt-1 w-full rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
+        <div className="absolute top-full right-0 z-40 mt-1 w-72 max-w-[calc(100vw-1.5rem)] rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
           {results.length === 0 ? (
             <p className="px-2 py-3 text-center text-sm text-muted-foreground">
               No results found.

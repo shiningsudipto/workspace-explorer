@@ -10,24 +10,69 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { useIsMobile } from "@/lib/use-is-mobile";
 import { FileSystemItem } from "@/lib/types";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
 export default function Home() {
   const hasHydrated = useWorkspaceStore((s) => s.hasHydrated);
   const selectedFolderId = useWorkspaceStore((s) => s.selectedFolderId);
+  const isMobile = useIsMobile();
 
   // Rename/delete are triggered from both the sidebar tree and the main
   // panel's rows, so the dialogs (and their target) live here, one level
   // above both, instead of being duplicated in each.
   const [renameTarget, setRenameTarget] = useState<FileSystemItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<FileSystemItem | null>(null);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   if (!hasHydrated) {
     return (
       <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
         Loading workspace…
       </div>
+    );
+  }
+
+  const dialogs = (
+    <>
+      <RenameItemDialog
+        item={renameTarget}
+        onOpenChange={(open) => {
+          if (!open) setRenameTarget(null);
+        }}
+      />
+      <DeleteItemDialog
+        item={deleteTarget}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      />
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+          <SheetContent side="left" className="w-72 gap-0 p-0">
+            <SheetTitle className="sr-only">Workspace folders</SheetTitle>
+            <WorkspaceSidebar
+              onRename={setRenameTarget}
+              onDelete={setDeleteTarget}
+              onNavigate={() => setMobileSidebarOpen(false)}
+            />
+          </SheetContent>
+        </Sheet>
+        <MainPanel
+          folderId={selectedFolderId}
+          onRename={setRenameTarget}
+          onDelete={setDeleteTarget}
+          onOpenSidebar={() => setMobileSidebarOpen(true)}
+        />
+        {dialogs}
+      </>
     );
   }
 
@@ -59,18 +104,7 @@ export default function Home() {
         </ResizablePanel>
       </ResizablePanelGroup>
 
-      <RenameItemDialog
-        item={renameTarget}
-        onOpenChange={(open) => {
-          if (!open) setRenameTarget(null);
-        }}
-      />
-      <DeleteItemDialog
-        item={deleteTarget}
-        onOpenChange={(open) => {
-          if (!open) setDeleteTarget(null);
-        }}
-      />
+      {dialogs}
     </>
   );
 }
