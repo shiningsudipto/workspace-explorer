@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CreateItemDialog } from "@/components/dialogs/create-item-dialog";
 import { DeleteItemDialog } from "@/components/dialogs/delete-item-dialog";
 import { RenameItemDialog } from "@/components/dialogs/rename-item-dialog";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { FileSystemItem } from "@/lib/types";
 import { useWorkspaceStore } from "@/lib/workspace-store";
@@ -35,6 +36,7 @@ export function MainPanel({ folderId }: MainPanelProps) {
           <WorkspaceBreadcrumb />
         </div>
         <WorkspaceSearch />
+        <ThemeToggle />
         {/* Creating always targets the folder being browsed, which isn't
             meaningful while a file editor has replaced that view. */}
         {!openFile && (
