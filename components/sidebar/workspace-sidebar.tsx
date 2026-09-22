@@ -32,7 +32,7 @@ export function WorkspaceSidebar() {
   return (
     <nav
       aria-label="Workspace folders"
-      className="flex h-full w-64 shrink-0 flex-col border-r"
+      className="flex h-full flex-col self-stretch border-r"
     >
       <ScrollArea className="flex-1">
         <div role="tree" className="px-2 py-2">

@@ -29,7 +29,7 @@ export function MainPanel({ folderId }: MainPanelProps) {
   const [deleteTarget, setDeleteTarget] = useState<FileSystemItem | null>(null);
 
   return (
-    <main className="flex flex-1 flex-col overflow-hidden">
+    <main className="flex h-full flex-col self-stretch overflow-hidden">
       <div className="flex items-center gap-3 border-b px-4 py-3">
         <div className="min-w-0 flex-1">
           <WorkspaceBreadcrumb />
