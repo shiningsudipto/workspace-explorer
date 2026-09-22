@@ -23,3 +23,10 @@ export type WorkspaceItems = Record<string, FileSystemItem>;
  * breadcrumb/path logic never needs a special case for "no parent folder".
  */
 export const ROOT_ID = "root";
+
+/**
+ * Result of a mutating store action that can fail validation (create/rename),
+ * so callers (dialogs) can show an inline error instead of the store
+ * throwing or silently no-op'ing.
+ */
+export type OperationResult = { ok: true } | { ok: false; error: string };
