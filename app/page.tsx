@@ -1,7 +1,6 @@
 "use client";
 
-import { FolderContents } from "@/components/main-panel/folder-contents";
-import { WorkspaceBreadcrumb } from "@/components/main-panel/workspace-breadcrumb";
+import { MainPanel } from "@/components/main-panel/main-panel";
 import { WorkspaceSidebar } from "@/components/sidebar/workspace-sidebar";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -20,14 +19,7 @@ export default function Home() {
   return (
     <div className="flex flex-1 overflow-hidden">
       <WorkspaceSidebar />
-      <main className="flex flex-1 flex-col overflow-hidden">
-        <div className="border-b px-4 py-3">
-          <WorkspaceBreadcrumb />
-        </div>
-        <div className="flex flex-1 flex-col overflow-y-auto">
-          <FolderContents folderId={selectedFolderId} />
-        </div>
-      </main>
+      <MainPanel folderId={selectedFolderId} />
     </div>
   );
 }

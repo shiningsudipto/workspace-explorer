@@ -139,7 +139,12 @@ export const useWorkspaceStore = create<WorkspaceState>()(
         });
       },
 
-      setSelectedFolderId: (id) => set({ selectedFolderId: id }),
+      // Navigating to a folder always closes any open file editor — a
+      // file's context only makes sense within the folder it was opened
+      // from, and this gives file-editor "leaving" a single, reliable
+      // trigger (the component unmounting) regardless of which UI element
+      // (sidebar, breadcrumb, a folder row) caused the navigation.
+      setSelectedFolderId: (id) => set({ selectedFolderId: id, selectedFileId: null }),
       setSelectedFileId: (id) => set({ selectedFileId: id }),
     }),
     {

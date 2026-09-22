@@ -41,7 +41,6 @@ export function ItemRow({ item, onOpen, onRename, onDelete }: ItemRowProps) {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-popup-open:opacity-100"
               aria-label={`Actions for ${item.name}`}
             />
           }
@@ -49,7 +48,14 @@ export function ItemRow({ item, onOpen, onRename, onDelete }: ItemRowProps) {
         >
           <MoreVertical className="h-4 w-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        {/* React re-parents portal events onto the *React* tree, so a
+            click here would otherwise still bubble into the row's
+            onClick even though the menu renders in a portal outside it
+            in the DOM. */}
+        <DropdownMenuContent
+          align="end"
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+        >
           <DropdownMenuItem onClick={() => onRename(item)}>
             Rename
           </DropdownMenuItem>
